@@ -620,7 +620,8 @@ fbq('track', 'PageView');
           <select id="q-indoor" name="indoor_outdoor"><option value="" selected>Choose one</option><option>Indoors</option><option>Outdoors</option><option>Both / not sure yet</option></select></div>
         <div class="qf-row"><label for="q-org">Organisation <small>(optional — school, company, planner, venue)</small></label><input id="q-org" name="organisation" type="text" autocomplete="organization"></div>
 
-        <div class="qf-row qf-wide"><label for="q-address">Venue name or street address <small>(if you have it — it lets us give a firm delivery price)</small></label><input id="q-address" name="event_address" type="text" autocomplete="street-address"></div>
+        <div class="qf-row qf-wide"><label for="q-address">Venue name or street address <small>(if you have it — it lets us give a firm delivery price)</small></label><input id="q-address" name="event_address" type="text" autocomplete="street-address">
+          <input type="hidden" id="q-venue-address" name="venue_address"><input type="hidden" id="q-venue-place-id" name="venue_place_id"><input type="hidden" id="q-venue-latlng" name="venue_latlng"></div>
         <div class="qf-row qf-wide"><span class="qf-label">Extras <small>(optional — added to your quote)</small></span>
           <div class="qf-checks">
             <label class="qf-check"><input type="checkbox" name="extras" value="Sony ULT Tower 10 speaker ($95/night)"> Sony party speaker with wireless mic — $95 a night</label>
@@ -690,6 +691,7 @@ fbq('track', 'PageView');
   </div>
 </footer>
 
+<script src="/js/bbrc-places.js"></script>
 <script>
 (function () {
   var form = document.getElementById('quote-form');
@@ -755,6 +757,20 @@ fbq('track', 'PageView');
     submit.textContent = 'Sending…';
     status.textContent = 'Sending your details…';
   });
+
+  // Address autocomplete on the venue field (Google Places). Picking a suggestion stores the exact
+  // address and fills the town if the visitor hasn't typed one.
+  var addrInput = document.getElementById('q-address');
+  if (addrInput && window.BBRCPlaces) {
+    var townAuto = false;
+    BBRCPlaces.autocomplete(addrInput, function (place) {
+      var vA = document.getElementById('q-venue-address'), vP = document.getElementById('q-venue-place-id'), vL = document.getElementById('q-venue-latlng');
+      if (!place) { vA.value = ''; vP.value = ''; vL.value = ''; return; }
+      vA.value = place.address; vP.value = place.placeId || ''; vL.value = (place.lat != null) ? place.lat + ',' + place.lng : '';
+      if (place.town && (!town.value.trim() || townAuto)) { town.value = place.town; townAuto = true; validateField(town); }
+    });
+    town.addEventListener('input', function () { townAuto = false; });
+  }
 })();
 </script>
 </body>

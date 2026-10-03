@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<title>Logistics Quote Calculator</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;650&family=Source+Sans+3:wght@400;600;700&display=swap">
+<script src="/js/bbrc-places.js"></script>
+<style>
+/* Layout: one column, inputs first, answer card pinned below them; assumptions folded away at the bottom. */
+:root{
+  --bg:#F8F5EE; --ink:#202B3A; --muted:#5B6472; --line:#DDD8CC; --card:#FFFFFF;
+  --citrus:#E4ED52; --citrus-ink:#202B3A;
+  --good:#2E7D4F; --warn:#B7791F; --bad:#B4322C; --good-bg:#E4F2E9; --warn-bg:#FBF0DA; --bad-bg:#F9E3E1;
+  --display:"Cormorant Garamond",Georgia,serif; --body:"Source Sans 3","Helvetica Neue",Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#171C25; --ink:#F2EFE7; --muted:#A3AAB6; --line:#323A48; --card:#202733;
+  --good:#7CCB9A; --warn:#E3B45A; --bad:#F08A84; --good-bg:#1E3328; --warn-bg:#3A2F17; --bad-bg:#3D2321; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#171C25; --ink:#F2EFE7; --muted:#A3AAB6; --line:#323A48; --card:#202733;
+  --good:#7CCB9A; --warn:#E3B45A; --bad:#F08A84; --good-bg:#1E3328; --warn-bg:#3A2F17; --bad-bg:#3D2321; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.45;margin:0}
+.wrap{max-width:720px;margin:0 auto;padding-block:28px 48px;padding-inline:16px}
+header{display:flex;flex-direction:column;gap:4px;margin-bottom:22px}
+.eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+h1{font-family:var(--display);font-weight:650;font-size:38px;line-height:1.05;margin:0;text-wrap:balance}
+.lede{color:var(--muted);margin:4px 0 0;max-width:60ch}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 18px}
+@media (max-width:520px){.grid{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:5px;min-width:0}
+.field.full{grid-column:1/-1}
+label{font-size:13px;font-weight:600;color:var(--muted)}
+.hint{font-size:12px;color:var(--muted);font-weight:400}
+input[type=number],input[type=text],select{width:100%;font:inherit;font-size:17px;padding:10px 12px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink)}
+input:focus,select:focus,button:focus-visible{outline:2px solid var(--ink);outline-offset:1px}
+.seg{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:var(--card)}
+.seg button{flex:1;font:inherit;font-size:15px;padding:10px;border:0;background:transparent;color:var(--ink);cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--ink);color:#F8F5EE;font-weight:600}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.row input{flex:1;min-width:0}
+.btn{font:inherit;font-weight:600;padding:10px 14px;border-radius:999px;border:1px solid var(--ink);background:transparent;color:var(--ink);cursor:pointer;white-space:nowrap;text-decoration:none;display:inline-block}
+.btn.primary{background:var(--citrus);border-color:var(--citrus);color:var(--citrus-ink)}
+section{margin-top:26px}
+h2{font-family:var(--display);font-weight:650;font-size:24px;margin:0 0 10px}
+.answer{background:var(--ink);color:#F8F5EE;border-radius:12px;padding:22px 22px 18px;margin-top:26px}
+.answer .eyebrow{color:#C9CDD6}
+.big{font-family:var(--display);font-size:56px;line-height:1;font-weight:650;color:var(--citrus);margin:4px 0 2px;font-variant-numeric:tabular-nums}
+.answer .sub{color:#C9CDD6;font-size:14px}
+.totals{display:grid;grid-template-columns:1fr auto;gap:6px 16px;margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.18);font-variant-numeric:tabular-nums}
+.totals .k{color:#C9CDD6}.totals .v{text-align:right}.totals .sum{font-weight:700;color:#fff}
+.badge{display:inline-block;font-size:13px;font-weight:700;padding:4px 10px;border-radius:999px;margin-top:12px}
+.badge.good{background:var(--good-bg);color:var(--good)}.badge.warn{background:var(--warn-bg);color:var(--warn)}.badge.bad{background:var(--bad-bg);color:var(--bad)}
+.flags{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.flag{font-size:14px;padding:10px 12px;border-radius:6px;border-left:4px solid var(--warn);background:var(--warn-bg);color:var(--ink)}
+.flag.bad{border-left-color:var(--bad);background:var(--bad-bg)}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:15px}
+td{padding:7px 0;border-bottom:1px solid var(--line);vertical-align:top}
+td.n{text-align:right;white-space:nowrap}
+tr.sum td{font-weight:700;border-bottom:0}
+td .hint{display:block}
+details{border:1px solid var(--line);border-radius:8px;padding:0 14px;background:var(--card)}
+summary{cursor:pointer;padding:12px 0;font-weight:600}
+details .grid{padding-bottom:14px}
+.copybox{margin-top:12px}
+textarea{width:100%;font:inherit;font-size:14px;min-height:150px;padding:10px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink);resize:vertical}
+.ok{font-size:13px;color:var(--good);font-weight:600;min-height:1.2em}
+footer{margin-top:28px;font-size:13px;color:var(--muted)}
+@media (prefers-reduced-motion:no-preference){.big{transition:opacity .15s}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="eyebrow">Bean Bag Rental Co · internal</div>
+  <h1>Logistics quote calculator</h1>
+  <p class="lede">Enter the job and get the delivery, setup and collection figure to quote. Spencer's cost is worked from his schedule, measured from 11201 Cedar Lake Dr, Raleigh.</p>
+</header>
+
+<section>
+  <h2>The job</h2>
+  <div class="grid">
+    <div class="field full">
+      <label for="venue">Venue</label>
+      <input type="text" id="venue" placeholder="Start typing the venue or street address and pick it from the list">
+      <span class="hint" id="venueStatus">Pick a suggestion and the distance fills in by itself.</span>
+    </div>
+    <div class="field">
+      <label for="miles">One-way distance from Spencer's <span class="hint" id="milesHint">miles by road — filled from the venue, or type it</span></label>
+      <input type="number" id="miles" value="24" min="0" step="1">
+    </div>
+    <div class="field">
+      <label for="bags">Bean bag chairs</label>
+      <input type="number" id="bags" value="20" min="1" step="1">
+    </div>
+    <div class="field">
+      <label for="nights">Nights the chairs stay on site</label>
+      <input type="number" id="nights" value="1" min="1" step="1">
+    </div>
+    <div class="field">
+      <label id="svcl">Service</label>
+      <div class="seg" role="group" aria-labelledby="svcl">
+        <button type="button" id="svcDrop" aria-pressed="true">Drop &amp; collect</button>
+        <button type="button" id="svcAttend" aria-pressed="false">Attended</button>
+      </div>
+    </div>
+    <div class="field">
+      <label for="hours">Hands-on hours (lead) <span class="hint" id="hoursHint">auto from chair count</span></label>
+      <input type="number" id="hours" value="3" min="0" step="0.25">
+    </div>
+    <div class="field">
+      <label for="attend">On-site attendance hours <span class="hint">attended jobs only</span></label>
+      <input type="number" id="attend" value="0" min="0" step="0.5" disabled>
+    </div>
+    <div class="field full">
+      <label for="helper">Helper hours <span class="hint">0 = Spencer alone; consider a helper above 30 chairs</span></label>
+      <input type="number" id="helper" value="0" min="0" step="0.5">
+    </div>
+  </div>
+</section>
+
+<div class="answer" aria-live="polite">
+  <div class="eyebrow">Quote for delivery, setup &amp; collection</div>
+  <div class="big" id="quote">$—</div>
+  <div class="sub" id="quoteSub"></div>
+  <div class="totals">
+    <div class="k">Seating <span id="seatDesc"></span></div><div class="v" id="seating">$—</div>
+    <div class="k">Logistics</div><div class="v" id="logi">$—</div>
+    <div class="k sum">Total to quote</div><div class="v sum" id="total">$—</div>
+  </div>
+  <span class="badge" id="badge">—</span>
+  <div class="flags" id="flags"></div>
+</div>
+
+<section>
+  <h2>Spencer's cost, line by line</h2>
+  <table>
+    <tr><td>Lead labour <span class="hint" id="l1h"></span></td><td class="n" id="l1">$—</td></tr>
+    <tr id="attRow" hidden><td>On-site attendance <span class="hint" id="l2h"></span></td><td class="n" id="l2">$—</td></tr>
+    <tr id="helpRow" hidden><td>Helper <span class="hint" id="l3h"></span></td><td class="n" id="l3">$—</td></tr>
+    <tr><td>Trip fee <span class="hint" id="l4h"></span></td><td class="n" id="l4">$—</td></tr>
+    <tr><td>Distance beyond 20 miles <span class="hint" id="l5h"></span></td><td class="n" id="l5">$—</td></tr>
+    <tr><td>Truck &amp; trailer <span class="hint" id="l6h"></span></td><td class="n" id="l6">$—</td></tr>
+    <tr class="sum"><td>Spencer's cost</td><td class="n" id="cost">$—</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>Copy for the quote</h2>
+  <div class="copybox">
+    <textarea id="summary" readonly></textarea>
+    <div class="row" style="margin-top:8px"><button type="button" class="btn primary" id="copyBtn">Copy summary</button><span class="ok" id="copied"></span></div>
+  </div>
+</section>
+
+<section>
+  <details>
+    <summary>Rates and assumptions (change only if Hamish says so)</summary>
+    <div class="grid">
+      <div class="field"><label for="rLead">Lead $/hr</label><input type="number" id="rLead" value="35" step="1"></div>
+      <div class="field"><label for="rHelp">Helper $/hr</label><input type="number" id="rHelp" value="25" step="1"></div>
+      <div class="field"><label for="rTrip">Trip fee, within 20 miles</label><input type="number" id="rTrip" value="60" step="5"></div>
+      <div class="field"><label for="rMile">Per mile beyond 20 (one way)</label><input type="number" id="rMile" value="3" step="0.25"></div>
+      <div class="field"><label for="rDay">Trip fee, each further day</label><input type="number" id="rDay" value="40" step="5"></div>
+      <div class="field"><label for="rTruck">Truck &amp; trailer $/day</label><input type="number" id="rTruck" value="100" step="5"></div>
+      <div class="field"><label for="markup">Markup on Spencer's cost</label><input type="number" id="markup" value="1.5" step="0.05" min="1"></div>
+      <div class="field"><label for="round">Round quote up to nearest $</label><input type="number" id="round" value="25" step="5" min="1"></div>
+      <div class="field"><label for="floor20">Minimum logistics, up to 20 chairs</label><input type="number" id="floor20" value="275" step="5"></div>
+      <div class="field"><label for="floor40">Minimum logistics, 21–40 chairs</label><input type="number" id="floor40" value="375" step="5"></div>
+      <div class="field"><label for="pBag">Seating, first night per chair</label><input type="number" id="pBag" value="30" step="1"></div>
+      <div class="field"><label for="pExtra">Seating, each extra night per chair</label><input type="number" id="pExtra" value="15" step="1"></div>
+    </div>
+  </details>
+</section>
+
+<footer>Spencer's schedule: $35/hr lead, $25/hr helper, $60 trip fee within a 20-mile radius of his premises (+$3 per one-way mile beyond, +$40 each further day), $100 per truck-and-trailer day. Guardrail: his cost should stay under 38% of the total quoted; 38–50% is thin; over 50%, raise the logistics figure rather than discount chairs. Jobs beyond 60 miles one way are custom — ask Hamish.</footer>
+</div>
+
+<script>
+(function(){
+  var $=function(id){return document.getElementById(id)};
+  var money=function(n){return "$"+Math.round(n).toLocaleString("en-US")};
+  var attended=false, hoursTouched=false;
+  function autoHours(bags){return Math.max(1.5, Math.round((2+0.05*bags)*4)/4)}
+
+  function calc(){
+    var miles=+$("miles").value||0, bags=Math.max(1,+$("bags").value||0), nights=Math.max(1,+$("nights").value||1);
+    if(!hoursTouched){$("hours").value=autoHours(bags)}
+    var hours=+$("hours").value||0, att=attended?(+$("attend").value||0):0, helper=+$("helper").value||0;
+    var rLead=+$("rLead").value, rHelp=+$("rHelp").value, rTrip=+$("rTrip").value, rMile=+$("rMile").value,
+        rDay=+$("rDay").value, rTruck=+$("rTruck").value, markup=+$("markup").value||1, rnd=+$("round").value||1,
+        floor20=+$("floor20").value, floor40=+$("floor40").value, pBag=+$("pBag").value, pExtra=+$("pExtra").value;
+
+    var truckDays=nights>1?2:1;                 // drop day + separate collection day
+    var excess=Math.max(0,miles-20);
+    var l1=hours*rLead, l2=att*rLead, l3=helper*rHelp, l4=rTrip+rDay*(truckDays-1), l5=excess*rMile, l6=truckDays*rTruck;
+    var cost=l1+l2+l3+l4+l5+l6;
+
+    var floor=bags<=20?floor20:(bags<=40?floor40:floor40*1.25);
+    var raw=Math.max(cost*markup,floor);
+    var logi=Math.ceil(raw/rnd)*rnd;
+    var seatBags=Math.max(10,bags);
+    var seating=seatBags*(pBag+pExtra*(nights-1));
+    var total=seating+logi;
+    var share=cost/total;
+
+    $("quote").textContent=money(logi);
+    $("quoteSub").textContent=(raw===floor&&cost*markup<floor)?"Minimum for this chair count applies (Spencer's cost ×"+markup+" would be "+money(cost*markup)+")":"Spencer's cost "+money(cost)+" × "+markup+", rounded up to the nearest "+money(rnd);
+    $("seatDesc").textContent="· "+seatBags+" chairs × "+money(pBag)+(nights>1?" + "+(nights-1)+" extra night"+(nights>2?"s":"")+" × "+money(pExtra):"");
+    $("seating").textContent=money(seating); $("logi").textContent=money(logi); $("total").textContent=money(total);
+
+    var b=$("badge"), pct=Math.round(share*100);
+    b.className="badge "+(share<=0.38?"good":share<=0.5?"warn":"bad");
+    b.textContent=(share<=0.38?"Healthy margin":share<=0.5?"Thin margin":"Below guardrail")+" · Spencer's cost is "+pct+"% of the total";
+
+    var flags=[];
+    if(miles>60) flags.push({c:"bad",t:"Over 60 miles one way. Quote this as a custom job with Hamish; the standard trip fee does not cover the driving time."});
+    if(bags<10) flags.push({c:"",t:"Below the ten-chair minimum on the website. Seating is priced at ten chairs."});
+    if(bags>40) flags.push({c:"",t:"More than 40 chairs is the whole fleet. Check availability with Hamish before quoting."});
+    if(share>0.5) flags.push({c:"bad",t:"Spencer's cost is more than half the total. Raise the logistics figure or decline; do not discount the chairs."});
+    if(bags>30&&helper===0) flags.push({c:"",t:"Over 30 chairs with no helper. Spencer may ask for one; add 2–3 helper hours to see the effect."});
+    $("flags").innerHTML=flags.map(function(f){return '<div class="flag '+f.c+'">'+f.t+'</div>'}).join("");
+
+    $("l1").textContent=money(l1); $("l1h").textContent=hours+" h × "+money(rLead)+" (loading, setup, collection)";
+    $("attRow").hidden=!attended; $("l2").textContent=money(l2); $("l2h").textContent=att+" h × "+money(rLead);
+    $("helpRow").hidden=helper<=0; $("l3").textContent=money(l3); $("l3h").textContent=helper+" h × "+money(rHelp);
+    $("l4").textContent=money(l4); $("l4h").textContent=truckDays>1?money(rTrip)+" + "+money(rDay)+" further day":"covers all legs within 20 miles";
+    $("l5").textContent=money(l5); $("l5h").textContent=excess>0?excess+" mi × "+money(rMile)+" (= 4 legs × $0.75)":"venue is inside the 20-mile radius";
+    $("l6").textContent=money(l6); $("l6h").textContent=truckDays+" day"+(truckDays>1?"s":"")+" × "+money(rTruck);
+    $("cost").textContent=money(cost);
+
+    var venue=$("venue").value.trim();
+    $("summary").value=
+      "Quote — "+bags+" chairs, "+nights+" night"+(nights>1?"s":"")+", "+(attended?"attended ("+att+" h on site)":"drop & collect")+(venue?", "+venue:"")+"\n"+
+      "Seating: "+money(seating)+" ("+seatBags+" chairs)\n"+
+      "Delivery, setup & collection: "+money(logi)+"\n"+
+      "Total: "+money(total)+"\n\n"+
+      "Internal — Spencer's estimated cost: "+money(cost)+" ("+pct+"% of total). Distance "+miles+" mi one way from Cedar Lake Dr.";
+  }
+
+  function setSvc(a){attended=a; $("svcDrop").setAttribute("aria-pressed",!a); $("svcAttend").setAttribute("aria-pressed",a); $("attend").disabled=!a; if(a&&!(+$("attend").value)) $("attend").value=4; calc()}
+  $("svcDrop").addEventListener("click",function(){setSvc(false)});
+  $("svcAttend").addEventListener("click",function(){setSvc(true)});
+  $("hours").addEventListener("input",function(){hoursTouched=true; $("hoursHint").textContent="edited by hand"});
+  $("bags").addEventListener("input",function(){if(hoursTouched){/* keep manual hours */}});
+  if(window.BBRCPlaces){
+    BBRCPlaces.autocomplete($("venue"),function(place){
+      var st=$("venueStatus");
+      if(!place){st.textContent="Pick a suggestion and the distance fills in by itself.";return}
+      st.textContent="Measuring the drive from Spencer's…";
+      BBRCPlaces.distanceFromSpencer(place).then(function(d){
+        $("miles").value=d.miles; $("milesHint").textContent="by road from Cedar Lake Dr, about "+d.minutes+" min each way";
+        st.textContent=place.address; calc();
+      }).catch(function(){st.textContent="Couldn't measure the distance — check it on Google Maps and type the miles in."});
+    });
+  }
+  $("venue").addEventListener("input",calc);
+  Array.prototype.forEach.call(document.querySelectorAll("input"),function(el){el.addEventListener("input",calc)});
+  $("copyBtn").addEventListener("click",function(){
+    var t=$("summary"); var done=function(){$("copied").textContent="Copied"; setTimeout(function(){$("copied").textContent=""},2000)};
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t.value).then(done,function(){t.select();done()})}else{t.select();done()}
+  });
+  calc();
+})();
+</script>
+</body>
+</html>
