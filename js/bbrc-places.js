@@ -3,7 +3,7 @@
 window.BBRCPlaces = (function () {
   var KEY = 'AIzaSyC7WCavaqgBRfUfugxF4k_63Qx9jIHQzJc';
   var ORIGIN = '11201 Cedar Lake Dr, Raleigh, NC 27614'; // Spencer's premises
-  var BIAS = { circle: { center: { latitude: 35.9, longitude: -78.8 }, radius: 160000 } }; // Triangle, ~100 mi
+  var BIAS = { rectangle: { low: { latitude: 34.8, longitude: -80.2 }, high: { latitude: 36.6, longitude: -77.4 } } }; // central NC, Triangle in the middle
   var css = '.bbrc-ac{position:relative}.bbrc-ac-list{position:absolute;left:0;right:0;top:100%;z-index:50;margin:4px 0 0;padding:4px 0;list-style:none;background:#fff;color:#202B3A;border:1px solid #DAD6CC;border-radius:10px;box-shadow:0 12px 32px rgba(32,43,58,.18);max-height:280px;overflow-y:auto;text-align:left}.bbrc-ac-list[hidden]{display:none}.bbrc-ac-item{padding:9px 14px;cursor:pointer;font-size:15px;line-height:1.3}.bbrc-ac-item small{display:block;color:#5B6472;font-size:13px}.bbrc-ac-item[aria-selected=true],.bbrc-ac-item:hover{background:#F1EEE4}.bbrc-ac-foot{padding:6px 14px 4px;font-size:11px;color:#8A90A0;text-align:right}';
   var style = document.createElement('style'); style.textContent = css; document.head.appendChild(style);
 
