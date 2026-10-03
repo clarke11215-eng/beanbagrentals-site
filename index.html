@@ -220,6 +220,9 @@ section { padding: 96px 40px; }
 .qf-row label small { display: block; font-weight: 400; color: rgba(250,247,240,0.65); font-size: 12.5px; margin-top: 2px; }
 .req { color: var(--citrus); }
 .qf-row input, .qf-row select, .qf-row textarea { width: 100%; font: inherit; font-size: 16px; padding: 12px 14px; border: 1px solid #DAD6CC; border-radius: 10px; background: #FCFAF5; color: var(--ink); }
+.qf-row { min-width: 0; }
+.qf-row input, .qf-row select, .qf-row textarea { box-sizing: border-box; max-width: 100%; min-width: 0; }
+.qf-row input[type="date"] { display: block; -webkit-appearance: none; appearance: none; min-height: 50px; }
 .qf-row input:focus, .qf-row select:focus, .qf-row textarea:focus { outline: 3px solid var(--citrus); outline-offset: 2px; border-color: var(--citrus); }
 .qf-row .check { display: flex; align-items: center; gap: 10px; font-weight: 500; font-size: 14px; margin-top: 8px; color: rgba(250,247,240,0.9); }
 .qf-row .check input { width: 18px; height: 18px; accent-color: var(--citrus); }
