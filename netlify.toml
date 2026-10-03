@@ -1,0 +1,4 @@
+# beanbagrentals.com — plain static site, no build step.
+[build]
+  publish = "."
+  command = ""
