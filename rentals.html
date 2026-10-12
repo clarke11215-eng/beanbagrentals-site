@@ -13,7 +13,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pricing — Rent Bean Bag Chairs | Bean Bag Rental Co</title>
-<meta name="description" content="Bean bag chair rental pricing for the Raleigh-Durham Triangle: $30 per chair per night with a $500 minimum delivered booking, delivery quoted for your venue. Multi-night rates available.">
+<meta name="description" content="Bean bag chair rental pricing for the Raleigh-Durham Triangle: $30 per chair per night with a $500 minimum delivered booking, delivery quoted for your venue. Add-ons: illuminated globes, lounge tables, candles, string lighting, speakers. Multi-night rates available.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://beanbagrentals.com/rentals">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -170,6 +170,23 @@ section { padding: 96px 40px; }
 .sheet-note { font-size: 14px; color: var(--muted); margin-top: 16px; text-align: center; }
 .sheet-note .link-arrow { font-size: 14px; }
 #campus { background: var(--paper); }
+
+
+/* ADD-ONS */
+#addons { background: var(--paper-warm); }
+.addon-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 44px; text-align: left; }
+.addon { background: var(--cream); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; }
+.addon .photo { aspect-ratio: 4/3; overflow: hidden; position: relative; }
+.addon .photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.addon .photo .credit { position: absolute; right: 8px; bottom: 6px; font-size: 10px; color: #fff; opacity: .8; }
+.addon .body { padding: 18px 20px 22px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.addon h3 { font-family: 'DM Serif Display', serif; font-weight: 400; font-size: 22px; line-height: 1.15; }
+.addon .price { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--ink); }
+.addon .price small { font-family: inherit; font-size: 13px; color: var(--muted); display: block; margin-top: 2px; font-family: 'DM Sans', sans-serif; }
+.addon p { font-size: 14.5px; line-height: 1.55; color: var(--muted); }
+.addon-note { margin: 28px auto 0; max-width: 720px; font-size: 14px; color: var(--muted); }
+@media (max-width: 900px) { .addon-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 600px) { .addon-grid { grid-template-columns: 1fr; } }
 
 /* GALLERY */
 .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 48px; align-items: start; }
@@ -447,6 +464,22 @@ fbq('track', 'PageView');
       <a href="/#quote" class="btn btn-primary">Get a quote</a>
     </div>
     <p class="price-example">Example: 12 bean bags for a single night in Chapel Hill = $360 + delivery quote. A second night on site adds $15 per chair.</p>
+  </div>
+</section>
+<section id="addons">
+  <div class="container center">
+    <div class="section-label">Add-ons</div>
+    <h2 class="section-title">Make it a <em>lounge</em>, not just seating.</h2>
+    <p class="section-lede">Everything that turned a lawn into Discover Durham's candlelit Good Moon lounge is available with your chairs. Tick what you want on the quote form and it comes on the same truck.</p>
+    <div class="addon-grid">
+      <div class="addon"><div class="photo"><img src="/img/addon-globes-night.jpg" alt="Glowing illuminated globe lights in three sizes beside white and yellow bean bag chairs at night" loading="lazy"><span class="credit">Photo: Discover Durham / A.J. Alston</span></div><div class="body"><h3>Illuminated globes</h3><div class="price">$25 each per night<small>Set of 10 for $200 · 4-globe minimum</small></div><p>Battery-powered light spheres in three sizes (14", 16" and 20"), colour-changing or warm white, remote controlled. Dot them between chairs and the lounge glows after dark.</p></div></div>
+      <div class="addon"><div class="photo"><img src="/img/addon-table-candles.jpg" alt="White lounge coffee table with flameless candles and florals between yellow and white bean bag chairs" loading="lazy"><span class="credit">Photo: Discover Durham / A.J. Alston</span></div><div class="body"><h3>White lounge tables</h3><div class="price">$20 each per night<small>Five available · 2-table minimum</small></div><p>Low white outdoor coffee tables that anchor a pod of four or five chairs — somewhere to put the drinks, the candles and the flowers.</p></div></div>
+      <div class="addon"><div class="photo"><img src="/img/good-moon-candles-florals.jpg" alt="Flameless pillar candles in three heights and fresh florals on a white table" loading="lazy"><span class="credit">Photo: Discover Durham / A.J. Alston</span></div><div class="body"><h3>Flameless candles</h3><div class="price">$45 per set of 20<small>All 60 for $120</small></div><p>Flickering LED pillars in three heights, safe on grass, tables and aisles. No flame, no wax, no venue fire rules to worry about.</p></div></div>
+      <div class="addon"><div class="photo"><img src="/img/addon-globes-table-night.jpg" alt="String lights and glowing globes over a bean bag lounge on a city lawn at night" loading="lazy"><span class="credit">Photo: Discover Durham / A.J. Alston</span></div><div class="body"><h3>String lighting</h3><div class="price">From $450 installed<small>200 ft of warm-white festoon on ten 9-ft poles with weighted bases</small></div><p>Overhead lighting with no stakes in the ground, so it works on lawns, patios and plazas. We install it with the chairs and take it down after.</p></div></div>
+      <div class="addon"><div class="photo"><img src="/img/sony-ult-tower-poster.jpg" alt="Sony ULT Tower 10 party speaker" loading="lazy"></div><div class="body"><h3>Sony ULT Tower 10 speaker</h3><div class="price">$95 per night<small>Both speakers linked in stereo, $170 per night</small></div><p>Bluetooth from any phone, 360° sound, party lights and a wireless karaoke mic. One suits a room or small lawn; the pair covers a crowd.</p></div></div>
+      <div class="addon"><div class="photo"><img src="/img/wedding-garden.jpg" alt="White bean bag chairs around a small table on a picnic rug in a garden" loading="lazy"></div><div class="body"><h3>Picnic rugs &amp; florals</h3><div class="price">Rugs $15 each per night<small>Florals quoted per event</small></div><p>Plaid picnic rugs with a waterproof backing (about 6½ × 10 ft) to anchor a lounge or seat the overflow. Fresh floral arrangements in glass vessels are quoted to suit your colours.</p></div></div>
+    </div>
+    <p class="addon-note">Add-ons travel with a chair booking and are priced per night like the chairs. Pick them on the <a href="/#quote">quote form</a> and they're itemised in your quote.</p>
   </div>
 </section>
 <section class="dark-section">
