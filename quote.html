@@ -506,6 +506,11 @@ fbq('track', 'PageView');
       var notes = form.querySelector('#q-notes');
       notes.value = (notes.value ? notes.value.trim() + '\n' : '') + 'Extras: ' + extras.join('; ');
     }
+    var hold = document.getElementById('q-hold');
+    if (hold && hold.checked) {
+      var notesH = form.querySelector('#q-notes');
+      notesH.value = (notesH.value ? notesH.value.trim() + '\n' : '') + 'Hold for review: yes (team entry via /quote?review=1)';
+    }
     submit.disabled = true;
     submit.textContent = 'Sending…';
     status.textContent = 'Sending your details…';
