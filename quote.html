@@ -375,6 +375,7 @@ fbq('track', 'PageView');
         </details>
       </div>
 
+      <div class="qf-row qf-wide qf-notice" id="q-review-row" hidden><p><label class="qf-check" style="color:inherit"><input type="checkbox" name="hold_for_review" value="yes" id="q-hold" checked> <strong>Team use — hold this quote for review.</strong> The priced draft goes to Ashley instead of the customer; she sends it on once she's happy with it.</label></p></div>
       <button type="submit" class="btn btn-light qf-submit" id="qf-submit">Request my quote</button>
       <p class="qf-status" id="qf-status" role="status" aria-live="polite"></p>
       <ul class="qp-trust"><li>No payment now</li><li>Reply within a day</li><li>Delivered, set up and collected</li></ul>
@@ -475,6 +476,15 @@ fbq('track', 'PageView');
     el.addEventListener('input', function () { if (el.closest('.qf-row').classList.contains('invalid')) validateField(el); });
   });
 
+  (function () {
+    try {
+      var q = new URLSearchParams(window.location.search);
+      if (q.get('review') === '1') {
+        var row = document.getElementById('q-review-row'); if (row) row.hidden = false;
+        var src = form.querySelector('input[name="source"]'); if (src) src.value = 'Website form (team entry, held for review)';
+      } else { var h = document.getElementById('q-hold'); if (h) h.checked = false; }
+    } catch (err) {}
+  })();
   form.addEventListener('submit', function (e) {
     var firstBad = null;
     form.querySelectorAll('[required]').forEach(function (el) { if (!validateField(el) && !firstBad) firstBad = el; });
