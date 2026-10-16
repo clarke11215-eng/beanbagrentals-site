@@ -76,7 +76,8 @@ exports.handler = async (event) => {
     const { payload } = JSON.parse(event.body || '{}');
     if (!payload || payload.form_name !== 'wedding-inquiry') return { statusCode: 200, body: 'ignored: other form' };
 
-    const token = process.env.AIRTABLE_TOKEN;
+    // strip any stray spaces/newlines picked up when the token was pasted into Netlify
+    const token = (process.env.AIRTABLE_TOKEN || '').replace(/[^A-Za-z0-9._-]/g, '');
     if (!token) {
       console.error('wedding-inquiry: AIRTABLE_TOKEN is not set. The submission is safe in Netlify Forms; it was not copied to Airtable.');
       return { statusCode: 200, body: 'airtable not configured' };
