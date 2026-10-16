@@ -2,3 +2,7 @@
 [build]
   publish = "."
   command = ""
+
+# Copies Weddings-page form submissions into the "Wedding Inquiries" Airtable table (needs AIRTABLE_TOKEN env var).
+[functions]
+  directory = "netlify/functions"
